@@ -74,8 +74,22 @@ def main(args: Any | None = None) -> Any:
         help="errors: set to 'log'(default) to log the exceptions, 'ignore' to ignore"
         " them or 'strict' to raise them",
     )
+    arg(
+        "--stdout",
+        default=False,
+        help="""If True print the metadata to standard output.
+        Otherwise the metadata is printed to standard error.
+        """,
+        action="store_true"
+    )
     args = parser.parse_args(args)
     metadata = metadata_from_url(
         args.url, args.syntaxes, args.uniform, args.schema_context, args.errors
     )
-    return json.dumps(metadata, indent=2, sort_keys=True)
+
+    metadata_json = json.dumps(metadata, indent=2, sort_keys=True)
+    if args.stdout:
+        print(metadata_json)
+        return ""
+    else:
+        return metadata_json
